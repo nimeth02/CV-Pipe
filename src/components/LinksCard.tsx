@@ -44,7 +44,7 @@ export default function LinksCard({ notify }: { notify: (kind: "ok" | "err", tex
   }
 
   return (
-    <section className={`${card} p-5`}>
+    <section className={`${card} p-4 sm:p-5`}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="text-sm font-semibold tracking-tight">My links</h3>
         {!draft && (
@@ -71,7 +71,7 @@ export default function LinksCard({ notify }: { notify: (kind: "ok" | "err", tex
               />
             </Field>
           ))}
-          <div className="flex gap-2 md:col-span-3">
+          <div className="flex flex-wrap gap-2 md:col-span-3">
             <button type="button" className={btnPrimary} disabled={saving} onClick={save}>
               {saving ? "Saving…" : "Save"}
             </button>
@@ -85,14 +85,15 @@ export default function LinksCard({ notify }: { notify: (kind: "ok" | "err", tex
       ) : (
         <ul className="space-y-2">
           {filled.map(([k, label]) => (
-            <li key={k} className="flex items-center gap-3 rounded-xl border border-white/5 bg-black/20 px-3 py-2">
-              <span className="w-20 shrink-0 text-xs font-medium tracking-wide text-zinc-500 uppercase">{label}</span>
+            <li key={k} className="flex items-center gap-2 rounded-xl sm:gap-3 border border-white/5 bg-black/20 px-3 py-2">
+              <span className="hidden w-20 shrink-0 text-xs sm:inline font-medium tracking-wide text-zinc-500 uppercase">{label}</span>
               <a
                 href={links[k]}
                 target="_blank"
                 rel="noreferrer"
                 className="min-w-0 flex-1 truncate text-sm text-indigo-300 hover:underline"
               >
+                <span className="block text-[10px] font-medium tracking-wide text-zinc-500 uppercase sm:hidden">{label}</span>
                 {links[k]}
               </a>
               <CopyButton text={links[k]} />

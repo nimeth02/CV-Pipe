@@ -60,25 +60,25 @@ export default function Dashboard() {
       <div className="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[900px] -translate-x-1/2 rounded-full bg-indigo-600/20 blur-[120px]" />
       <div className="pointer-events-none absolute top-60 -right-40 h-[360px] w-[360px] rounded-full bg-violet-600/10 blur-[100px]" />
 
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-zinc-950/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 text-sm font-bold shadow-lg shadow-indigo-500/30">
+      <header className="sticky top-0 z-20 border-b border-white/10 bg-zinc-950/70 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6 sm:py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 text-sm font-bold shadow-lg shadow-indigo-500/30">
               CV
             </div>
-            <div>
-              <h1 className="text-base font-semibold tracking-tight">CV Application Manager</h1>
-              <p className="text-xs text-zinc-500">
+            <div className="min-w-0">
+              <h1 className="truncate text-base font-semibold tracking-tight">CV Application Manager</h1>
+              <p className="truncate text-xs text-zinc-500">
                 {smtp?.smtpConfigured ? `Sending as ${smtp.fromAddress}` : "Email not configured"}
               </p>
             </div>
           </div>
-          <nav className="flex rounded-xl border border-white/10 bg-white/[0.03] p-1">
+          <nav className="flex w-full rounded-xl sm:w-auto border border-white/10 bg-white/[0.03] p-1">
             {tabs.map(([key, label, n]) => (
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`rounded-lg px-4 py-1.5 text-sm font-medium transition ${
+                className={`flex-1 rounded-lg px-4 py-2 text-sm sm:flex-none sm:py-1.5 font-medium transition ${
                   tab === key ? "bg-white/10 text-white shadow" : "text-zinc-400 hover:text-zinc-200"
                 }`}
               >
@@ -90,7 +90,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-6xl space-y-6 px-6 py-8">
+      <main className="relative mx-auto max-w-6xl space-y-4 px-4 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:space-y-6 sm:px-6 sm:py-8">
         {smtp && !smtp.smtpConfigured && (
           <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
             Email is not configured. Copy <code className="text-amber-100">.env.example</code> to{" "}
@@ -124,7 +124,21 @@ export default function Dashboard() {
             {sent.length === 0 ? (
               <p className="p-8 text-center text-sm text-zinc-500">Nothing sent yet.</p>
             ) : (
-              <table className="w-full text-left text-sm">
+              <>
+              <ul className="divide-y divide-white/5 sm:hidden">
+                {sent.map((a) => (
+                  <li key={a.id} className="space-y-1.5 px-4 py-3">
+                    <div className="truncate text-sm font-medium text-zinc-100">{a.email}</div>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+                      <span className="rounded-md bg-indigo-500/15 px-2 py-0.5 font-medium text-indigo-300 ring-1 ring-indigo-500/30">
+                        {roles.find((r) => r.id === a.roleId)?.name ?? a.position}
+                      </span>
+                      <span>{fmt(a.sentAt!)}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <table className="hidden w-full text-left text-sm sm:table">
                 <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-zinc-500">
                   <tr>
                     <th className="px-5 py-3 font-medium">Email</th>
@@ -135,8 +149,8 @@ export default function Dashboard() {
                 <tbody className="divide-y divide-white/5">
                   {sent.map((a) => (
                     <tr key={a.id} className="transition hover:bg-white/[0.02]">
-                      <td className="px-5 py-3 font-medium text-zinc-100">{a.email}</td>
-                      <td className="px-5 py-3 text-zinc-400">{fmt(a.sentAt!)}</td>
+                      <td className="px-5 py-3 font-medium break-all text-zinc-100">{a.email}</td>
+                      <td className="px-5 py-3 whitespace-nowrap text-zinc-400">{fmt(a.sentAt!)}</td>
                       <td className="px-5 py-3">
                         <span className="rounded-md bg-indigo-500/15 px-2 py-0.5 text-xs font-medium text-indigo-300 ring-1 ring-indigo-500/30">
                           {roles.find((r) => r.id === a.roleId)?.name ?? a.position}
@@ -146,6 +160,7 @@ export default function Dashboard() {
                   ))}
                 </tbody>
               </table>
+              </>
             )}
           </section>
         )}
@@ -155,7 +170,7 @@ export default function Dashboard() {
 
       {toast && (
         <div
-          className={`fixed right-6 bottom-6 z-30 max-w-md rounded-xl border px-4 py-3 text-sm shadow-2xl backdrop-blur-xl ${
+          className={`fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 break-words sm:inset-x-auto sm:right-6 sm:bottom-6 sm:max-w-md rounded-xl border px-4 py-3 text-sm shadow-2xl backdrop-blur-xl ${
             toast.kind === "ok"
               ? "border-emerald-500/30 bg-emerald-500/15 text-emerald-200"
               : "border-rose-500/30 bg-rose-500/15 text-rose-200"
@@ -213,7 +228,7 @@ function SendForm({
 
   if (roles.length === 0) {
     return (
-      <section className={`${card} p-8 text-center`}>
+      <section className={`${card} p-6 text-center sm:p-8`}>
         <h2 className="text-lg font-semibold">Create a role first</h2>
         <p className="mx-auto mt-1 max-w-md text-sm text-zinc-400">
           A role holds the email subject, body, cover letter and CV that get sent.
@@ -226,7 +241,7 @@ function SendForm({
   }
 
   return (
-    <form onSubmit={submit} className={`${card} p-5`}>
+    <form onSubmit={submit} className={`${card} p-4 sm:p-5`}>
       <div className="mb-4">
         <h2 className="text-lg font-semibold tracking-tight">Send application</h2>
         <p className="text-sm text-zinc-400">Pick a role and enter one or more email addresses.</p>
@@ -263,7 +278,7 @@ function SendForm({
               {emails.map((e) => (
                 <span
                   key={e}
-                  className={`rounded-md px-2 py-0.5 text-xs ring-1 ${
+                  className={`max-w-full truncate rounded-md px-2 py-0.5 text-xs ring-1 ${
                     EMAIL_RE.test(e)
                       ? "bg-white/[0.05] text-zinc-300 ring-white/10"
                       : "bg-rose-500/10 text-rose-300 ring-rose-500/30"
@@ -280,19 +295,19 @@ function SendForm({
       {role && (
         <div className="mt-4 rounded-xl border border-white/5 bg-black/20 p-4 text-sm">
           <div className="text-xs uppercase tracking-wide text-zinc-500">Preview</div>
-          <div className="mt-1 font-medium text-zinc-200">
+          <div className="mt-1 font-medium break-words text-zinc-200">
             {(role.subject || "Application for {position} position").replaceAll("{position}", role.name).replaceAll("{company}", "")}
           </div>
-          <p className="mt-2 line-clamp-4 whitespace-pre-line text-zinc-400">
+          <p className="mt-2 line-clamp-4 whitespace-pre-line break-words text-zinc-400">
             {[role.body, role.coverLetter].filter(Boolean).join("\n\n").replaceAll("{position}", role.name).replaceAll("{company}", "") ||
               "(empty body)"}
           </p>
         </div>
       )}
 
-      <div className="mt-4 flex items-center justify-end gap-3">
-        {invalid.length > 0 && <span className="text-xs text-rose-400">Fix invalid addresses</span>}
-        <button className={btnPrimary} disabled={!canSend}>
+      <div className="mt-4 flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+        {invalid.length > 0 && <span className="text-center text-xs text-rose-400">Fix invalid addresses</span>}
+        <button className={`${btnPrimary} py-2.5 sm:py-2`} disabled={!canSend}>
           {sending ? "Sending…" : `Send${emails.length > 1 ? ` to ${emails.length}` : ""}`}
         </button>
       </div>

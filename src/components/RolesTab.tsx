@@ -39,16 +39,16 @@ export default function RolesTab({
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h2 className="text-lg font-semibold tracking-tight">Roles</h2>
           <p className="text-sm text-zinc-400">
             Reusable email templates, cover letters and CVs per job role. CVs are saved as{" "}
-            <code className="text-zinc-300">assets/&lt;role name&gt;.pdf</code>.
+            <code className="break-all text-zinc-300">assets/&lt;role name&gt;.pdf</code>.
           </p>
         </div>
         {editing !== "new" && (
-          <button className={btnPrimary} onClick={() => setEditing("new")}>
+          <button className={`${btnPrimary} shrink-0`} onClick={() => setEditing("new")}>
             + New role
           </button>
         )}
@@ -70,13 +70,13 @@ export default function RolesTab({
             ) : (
               <li key={role.id} className={`${card} p-4 transition hover:border-white/20`}>
                 <div className="flex flex-wrap items-start gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="font-medium text-zinc-100">{role.name}</div>
+                  <div className="min-w-0 basis-full sm:basis-auto sm:flex-1">
+                    <div className="font-medium break-words text-zinc-100">{role.name}</div>
                     <div className="truncate text-sm text-zinc-500">Subject: {role.subject || "—"}</div>
                     <div className="mt-1 text-sm">
                       {role.cvFile ? (
                         <a
-                          className="text-indigo-300 hover:text-indigo-200 hover:underline"
+                          className="break-all text-indigo-300 hover:text-indigo-200 hover:underline"
                           href={`/api/roles/${role.id}/cv?v=${encodeURIComponent(role.updatedAt)}`}
                           target="_blank"
                           rel="noreferrer"
@@ -86,13 +86,13 @@ export default function RolesTab({
                       ) : (
                         <span className="text-amber-400">No CV uploaded</span>
                       )}
-                      <span className="text-zinc-500"> · Updated {new Date(role.updatedAt).toLocaleString()}</span>
+                      <span className="block text-zinc-500 sm:inline"><span className="hidden sm:inline"> · </span>Updated {new Date(role.updatedAt).toLocaleString()}</span>
                     </div>
                   </div>
-                  <button className={btnGhost} onClick={() => setEditing(role.id)}>
+                  <button className={`${btnGhost} flex-1 sm:flex-none`} onClick={() => setEditing(role.id)}>
                     Edit
                   </button>
-                  <button className={btnDanger} onClick={() => remove(role)}>
+                  <button className={`${btnDanger} flex-1 sm:flex-none`} onClick={() => remove(role)}>
                     Delete
                   </button>
                 </div>
@@ -125,7 +125,7 @@ function RoleForm({
 
   return (
     <form
-      className={`${card} grid gap-4 border-indigo-500/30 p-5 md:grid-cols-2`}
+      className={`${card} grid gap-4 border-indigo-500/30 p-4 sm:p-5 md:grid-cols-2`}
       onSubmit={(e) => {
         e.preventDefault();
         handle(new FormData(e.currentTarget));

@@ -1,5 +1,5 @@
 export const input =
-  "w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-500 outline-none transition focus:border-indigo-400/60 focus:bg-white/[0.06] focus:ring-4 focus:ring-indigo-500/15";
+  "w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 text-base text-zinc-100 sm:text-sm placeholder:text-zinc-500 outline-none transition focus:border-indigo-400/60 focus:bg-white/[0.06] focus:ring-4 focus:ring-indigo-500/15";
 export const btn =
   "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50";
 export const btnPrimary = `${btn} bg-linear-to-r from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-500/25 hover:brightness-110`;
