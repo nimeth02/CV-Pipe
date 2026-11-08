@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Field, btnDanger, btnGhost, btnPrimary, card, input, type Role } from "./ui";
 
 export default function RolesTab({
@@ -43,7 +43,7 @@ export default function RolesTab({
         <div className="min-w-0">
           <h2 className="text-lg font-semibold tracking-tight">Roles</h2>
           <p className="text-sm text-zinc-400">
-            Reusable email subjects, bodies and CVs per job role. CVs are saved as{" "}
+            Reusable email subjects, cover letters and CVs per job role. CVs are saved as{" "}
             <code className="break-all text-zinc-300">assets/&lt;role name&gt;.pdf</code>.
           </p>
         </div>
@@ -89,6 +89,12 @@ export default function RolesTab({
                       <span className="block text-zinc-500 sm:inline"><span className="hidden sm:inline"> · </span>Updated {new Date(role.updatedAt).toLocaleString()}</span>
                     </div>
                   </div>
+                  <CopyButton
+                    text={role.body}
+                    label="Copy cover letter"
+                    className={`${btnGhost} px-3`}
+                    notify={notify}
+                  />
                   <button className={`${btnGhost} flex-1 sm:flex-none`} onClick={() => setEditing(role.id)}>
                     Edit
                   </button>
@@ -115,6 +121,7 @@ function RoleForm({
   onCancel: () => void;
 }) {
   const [saving, setSaving] = useState(false);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   async function handle(form: FormData, extra?: Record<string, string>) {
     for (const [k, v] of Object.entries(extra ?? {})) form.set(k, v);
@@ -140,9 +147,14 @@ function RoleForm({
       <Field label="Email subject *" className="md:col-span-2">
         <input name="subject" required className={input} defaultValue={role?.subject} />
       </Field>
-      <Field label="Email body *" className="md:col-span-2">
-        <textarea name="body" required rows={10} className={input} defaultValue={role?.body} />
-      </Field>
+      <div className="md:col-span-2">
+        <Field label="Cover letter *">
+          <textarea ref={bodyRef} name="body" required rows={10} className={input} defaultValue={role?.body} />
+        </Field>
+        <div className="mt-2 flex justify-end">
+          <CopyButton text={() => bodyRef.current?.value ?? ""} label="Copy cover letter" className={`${btnGhost} px-3`} />
+        </div>
+      </div>
       <div className="flex flex-wrap gap-2 md:col-span-2">
         <button className={btnPrimary} disabled={saving}>
           {saving ? "Saving…" : role ? "Save changes" : "Create role"}
@@ -162,5 +174,75 @@ function RoleForm({
         )}
       </div>
     </form>
+  );
+}
+
+async function copyText(text: string) {
+  // navigator.clipboard needs HTTPS/localhost; fall back for plain-HTTP access (e.g. phone on LAN).
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  const ok = document.execCommand("copy");
+  ta.remove();
+  if (!ok) throw new Error("Copy failed");
+}
+
+function CopyButton({
+  text,
+  label,
+  className,
+  notify,
+}: {
+  text: string | (() => string);
+  label: string;
+  className: string;
+  notify?: (kind: "ok" | "err", text: string) => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      className={className}
+      title={copied ? "Copied" : label}
+      aria-label={copied ? "Copied" : label}
+      onClick={async () => {
+        const value = typeof text === "function" ? text() : text;
+        if (!value) return notify?.("err", "Cover letter is empty");
+        try {
+          await copyText(value);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        } catch {
+          notify?.("err", "Could not copy to clipboard");
+        }
+      }}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        className={copied ? "text-emerald-400" : ""}
+      >
+        {copied ? (
+          <path d="M20 6 9 17l-5-5" />
+        ) : (
+          <>
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </>
+        )}
+      </svg>
+    </button>
   );
 }

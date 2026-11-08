@@ -105,7 +105,7 @@ export default function LinksCard({ notify }: { notify: (kind: "ok" | "err", tex
   );
 }
 
-function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
+export function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <button

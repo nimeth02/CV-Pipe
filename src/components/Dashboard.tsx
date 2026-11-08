@@ -170,7 +170,7 @@ export default function Dashboard() {
 
         {tab === "roles" && <RolesTab roles={roles} setRoles={setRoles} notify={notify} />}
 
-        {tab === "sites" && <SitesTab roles={roles} notify={notify} />}
+        {tab === "sites" && <SitesTab notify={notify} />}
       </main>
 
       {toast && (
