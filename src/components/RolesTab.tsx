@@ -43,7 +43,7 @@ export default function RolesTab({
         <div className="min-w-0">
           <h2 className="text-lg font-semibold tracking-tight">Roles</h2>
           <p className="text-sm text-zinc-400">
-            Reusable email templates, cover letters and CVs per job role. CVs are saved as{" "}
+            Reusable email subjects, bodies and CVs per job role. CVs are saved as{" "}
             <code className="break-all text-zinc-300">assets/&lt;role name&gt;.pdf</code>.
           </p>
         </div>
@@ -137,19 +137,12 @@ function RoleForm({
       <Field label={role?.cvFile ? `CV (PDF) — current: ${role.cvFile}. Upload to replace.` : "CV (PDF)"}>
         <input name="cv" type="file" accept="application/pdf,.pdf" className="block w-full text-sm text-zinc-400 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-100 hover:file:bg-white/15" />
       </Field>
-      <Field label="Email subject" className="md:col-span-2">
-        <input name="subject" className={input} defaultValue={role?.subject} placeholder="Application for {position} position" />
+      <Field label="Email subject *" className="md:col-span-2">
+        <input name="subject" required className={input} defaultValue={role?.subject} />
       </Field>
-      <Field label="Email body" className="md:col-span-2">
-        <textarea name="body" rows={6} className={input} defaultValue={role?.body} />
+      <Field label="Email body *" className="md:col-span-2">
+        <textarea name="body" required rows={10} className={input} defaultValue={role?.body} />
       </Field>
-      <Field label="Cover letter" className="md:col-span-2">
-        <textarea name="coverLetter" rows={8} className={input} defaultValue={role?.coverLetter} />
-      </Field>
-      <p className="text-xs text-zinc-500 md:col-span-2">
-        <code className="text-zinc-300">{"{position}"}</code> is replaced with the role name. The cover letter is added
-        below the email body.
-      </p>
       <div className="flex flex-wrap gap-2 md:col-span-2">
         <button className={btnPrimary} disabled={saving}>
           {saving ? "Saving…" : role ? "Save changes" : "Create role"}

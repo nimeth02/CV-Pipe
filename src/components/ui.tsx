@@ -12,7 +12,6 @@ export interface Role {
   name: string;
   subject: string;
   body: string;
-  coverLetter: string;
   cvFile: string | null;
   createdAt: string;
   updatedAt: string;

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createApplication, fillTemplate, isValidEmail, listApplications, updateApplication } from "@/lib/store";
+import { createApplication, isValidEmail, listApplications, updateApplication } from "@/lib/store";
 import { sendApplicationEmail } from "@/lib/mailer";
 import { getRole } from "@/lib/roles";
 
@@ -31,12 +31,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: `Invalid email: ${invalid.join(", ")}` }, { status: 400 });
   }
 
-  const ctx = { company: "", position: role.name };
-  const subject = fillTemplate(role.subject || "Application for {position} position", ctx);
-  const message = fillTemplate([role.body, role.coverLetter].filter(Boolean).join("\n\n"), ctx);
+  const subject = role.subject || role.name;
+  const message = role.body;
 
   const applications = [];
   const failed: { email: string; error: string }[] = [];
+  let unsaved = 0;
 
   for (const email of emails) {
     const fields = {
@@ -57,11 +57,27 @@ export async function POST(request: Request) {
       failed.push({ email, error: err instanceof Error ? err.message : String(err) });
       continue;
     }
-    const app = await createApplication(fields);
-    applications.push(
-      (await updateApplication(app.id, { sentAt: new Date().toISOString(), sendCount: 1 }))!,
-    );
+    const sentAt = new Date().toISOString();
+    try {
+      const app = await createApplication(fields);
+      applications.push((await updateApplication(app.id, { sentAt, sendCount: 1 }))!);
+    } catch {
+      // The email already went out. If history cannot be saved (e.g. read-only disk on Vercel),
+      // still report success so the user does not retry and send it twice.
+      unsaved++;
+      applications.push({
+        ...fields,
+        id: crypto.randomUUID(),
+        createdAt: sentAt,
+        sentAt,
+        sendCount: 1,
+        lastError: null,
+      });
+    }
   }
 
-  return NextResponse.json({ applications, failed }, { status: failed.length === emails.length ? 502 : 201 });
+  return NextResponse.json(
+    { applications, failed, unsaved },
+    { status: failed.length === emails.length ? 502 : 201 },
+  );
 }

@@ -6,7 +6,6 @@ export function parseRoleForm(form: FormData) {
     name: str("name"),
     subject: str("subject"),
     body: str("body"),
-    coverLetter: str("coverLetter"),
   };
   const file = form.get("cv");
   const cv = file instanceof File && file.size > 0 ? file : null;

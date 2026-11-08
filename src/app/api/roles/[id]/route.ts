@@ -7,7 +7,7 @@ function fail(err: unknown) {
   throw err;
 }
 
-// multipart/form-data: name, subject, body, coverLetter, cv? (pdf), removeCv?
+// multipart/form-data: name, subject, body, cv? (pdf), removeCv?
 export async function PUT(request: NextRequest, ctx: RouteContext<"/api/roles/[id]">) {
   const { id } = await ctx.params;
   try {

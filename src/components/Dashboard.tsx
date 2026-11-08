@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import LinksCard from "./LinksCard";
 import RolesTab from "./RolesTab";
+import SitesTab from "./SitesTab";
 import { Field, btnPrimary, card, input, type Role } from "./ui";
 
 interface Application {
@@ -16,7 +17,7 @@ interface Application {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const fmt = (iso: string) => new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 
-type Tab = "send" | "sent" | "roles";
+type Tab = "send" | "sent" | "roles" | "sites";
 type Toast = { kind: "ok" | "err"; text: string } | null;
 
 export default function Dashboard() {
@@ -52,6 +53,7 @@ export default function Dashboard() {
     ["send", "Send", null],
     ["sent", "Sent", sent.length],
     ["roles", "Roles", roles.length],
+    ["sites", "Sites", null],
   ];
 
   return (
@@ -78,7 +80,7 @@ export default function Dashboard() {
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`flex-1 rounded-lg px-4 py-2 text-sm sm:flex-none sm:py-1.5 font-medium transition ${
+                className={`flex-1 rounded-lg px-2 py-2 text-sm sm:flex-none sm:px-4 sm:py-1.5 font-medium transition ${
                   tab === key ? "bg-white/10 text-white shadow" : "text-zinc-400 hover:text-zinc-200"
                 }`}
               >
@@ -103,14 +105,15 @@ export default function Dashboard() {
           <SendForm
             roles={roles}
             onGoToRoles={() => setTab("roles")}
-            onDone={(created, failed) => {
+            onDone={(created, failed, unsaved) => {
               setApps((prev) => [...created, ...prev]);
               const ok = created.length;
-              if (failed.length === 0) notify("ok", `Sent to ${ok} address${ok === 1 ? "" : "es"}`);
+              const note = unsaved ? " (history could not be saved on this server)" : "";
+              if (failed.length === 0) notify("ok", `Sent to ${ok} address${ok === 1 ? "" : "es"}${note}`);
               else
                 notify(
                   "err",
-                  `${ok} sent, ${failed.length} failed: ${failed.map((f) => `${f.email} (${f.error})`).join("; ")}`,
+                  `${ok} sent${note}, ${failed.length} failed: ${failed.map((f) => `${f.email} (${f.error})`).join("; ")}`,
                 );
             }}
             onError={(e) => notify("err", e)}
@@ -166,6 +169,8 @@ export default function Dashboard() {
         )}
 
         {tab === "roles" && <RolesTab roles={roles} setRoles={setRoles} notify={notify} />}
+
+        {tab === "sites" && <SitesTab roles={roles} notify={notify} />}
       </main>
 
       {toast && (
@@ -190,7 +195,7 @@ function SendForm({
   onGoToRoles,
 }: {
   roles: Role[];
-  onDone: (created: Application[], failed: { email: string; error: string }[]) => void;
+  onDone: (created: Application[], failed: { email: string; error: string }[], unsaved: number) => void;
   onError: (e: string) => void;
   onGoToRoles: () => void;
 }) {
@@ -221,7 +226,7 @@ function SendForm({
     const data = await res.json();
     setSending(false);
     if (data.applications) {
-      onDone(data.applications, data.failed ?? []);
+      onDone(data.applications, data.failed ?? [], data.unsaved ?? 0);
       if (!data.failed?.length) setRaw("");
     } else onError(data.error);
   }
@@ -231,7 +236,7 @@ function SendForm({
       <section className={`${card} p-6 text-center sm:p-8`}>
         <h2 className="text-lg font-semibold">Create a role first</h2>
         <p className="mx-auto mt-1 max-w-md text-sm text-zinc-400">
-          A role holds the email subject, body, cover letter and CV that get sent.
+          A role holds the email subject, body and CV that get sent.
         </p>
         <button className={`${btnPrimary} mt-4`} onClick={onGoToRoles}>
           Go to Roles
@@ -296,11 +301,10 @@ function SendForm({
         <div className="mt-4 rounded-xl border border-white/5 bg-black/20 p-4 text-sm">
           <div className="text-xs uppercase tracking-wide text-zinc-500">Preview</div>
           <div className="mt-1 font-medium break-words text-zinc-200">
-            {(role.subject || "Application for {position} position").replaceAll("{position}", role.name).replaceAll("{company}", "")}
+            {role.subject || role.name}
           </div>
           <p className="mt-2 line-clamp-4 whitespace-pre-line break-words text-zinc-400">
-            {[role.body, role.coverLetter].filter(Boolean).join("\n\n").replaceAll("{position}", role.name).replaceAll("{company}", "") ||
-              "(empty body)"}
+            {role.body || "(empty body)"}
           </p>
         </div>
       )}

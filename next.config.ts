@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // Role CVs and saved data are read from disk at runtime; make sure Vercel ships them with the API routes.
+  outputFileTracingIncludes: {
+    "/api/*": ["./assets/**/*", "./data/**/*"],
+  },
   async headers() {
     return [
       {

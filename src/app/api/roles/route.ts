@@ -6,7 +6,7 @@ export async function GET() {
   return NextResponse.json(await listRoles());
 }
 
-// multipart/form-data: name, subject, body, coverLetter, cv? (pdf)
+// multipart/form-data: name, subject, body, cv? (pdf)
 export async function POST(request: Request) {
   try {
     const { input, cv } = parseRoleForm(await request.formData());

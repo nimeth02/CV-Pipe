@@ -7,13 +7,12 @@ export interface Role {
   name: string;
   subject: string;
   body: string;
-  coverLetter: string;
   cvFile: string | null; // file name inside /assets, always "<role name>.pdf"
   createdAt: string;
   updatedAt: string;
 }
 
-export type RoleInput = Pick<Role, "name" | "subject" | "body" | "coverLetter">;
+export type RoleInput = Pick<Role, "name" | "subject" | "body">;
 
 const ROLES_FILE = path.join(process.cwd(), "data", "roles.json");
 export const ASSETS_DIR = path.join(process.cwd(), "assets");

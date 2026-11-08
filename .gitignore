@@ -41,8 +41,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# app data (applications + uploaded CVs)
-/data
+# app data (applications, links, roles) and role CVs are committed so Vercel can read them
 
-# role CVs
-/assets
