@@ -1,52 +1,6 @@
 {
   "applications": [
-    {
-      "company": "nmm",
-      "position": "hy",
-      "email": "jj@jjj.com",
-      "subject": "kkk",
-      "message": "nkjnkjn",
-      "notes": "knk",
-      "status": "Applied",
-      "cvFile": null,
-      "id": "9411960a-4846-4e5f-8911-3114a4aedca1",
-      "createdAt": "2026-11-03T18:29:06.982Z",
-      "sentAt": null,
-      "sendCount": 0,
-      "lastError": "SMTP is not configured. Set SMTP_HOST, SMTP_USER and SMTP_PASS in .env.local"
-    },
-    {
-      "company": "",
-      "position": "Software Engineer",
-      "email": "20011002@gmail.com",
-      "subject": "Software engineer",
-      "message": "hi\n\nhi",
-      "notes": "",
-      "status": "Applied",
-      "cvFile": null,
-      "roleId": "07db1039-d3e1-46cc-8de0-59cd34e11c24",
-      "id": "351aa9b0-04aa-4b33-bccd-1b25be607776",
-      "createdAt": "2026-11-07T06:38:03.208Z",
-      "sentAt": "2026-11-07T06:38:03.214Z",
-      "sendCount": 1,
-      "lastError": null
-    },
-    {
-      "company": "",
-      "position": "Software Engineer",
-      "email": "20011002nimeth@gmail.com",
-      "subject": "Software engineer",
-      "message": "hi\n\nhi",
-      "notes": "",
-      "status": "Applied",
-      "cvFile": null,
-      "roleId": "07db1039-d3e1-46cc-8de0-59cd34e11c24",
-      "id": "33cb5edd-b0e1-4595-8770-f6a872d36091",
-      "createdAt": "2026-11-07T06:40:55.141Z",
-      "sentAt": "2026-11-07T06:40:55.149Z",
-      "sendCount": 1,
-      "lastError": null
-    }
+   
   ],
   "settings": {
     "defaultSubject": "Application for {position} position",
